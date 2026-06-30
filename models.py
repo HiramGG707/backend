@@ -204,3 +204,28 @@ class Hospital(Base):
     mapa_url: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     sitio_web: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     fecha_registro: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class HistorialClinico(Base):
+    __tablename__ = "historial_clinico"
+
+    id_historial: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id_usuario: Mapped[Optional[int]] = mapped_column(ForeignKey("usuario.id_usuario", ondelete="SET NULL"), nullable=True)
+    edad: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    genero: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    ocupacion: Mapped[Optional[str]] = mapped_column(String(150), nullable=True)
+    enfermedades: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    alergias: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    toxico_nombre: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    toxico_tipo: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    sustancia_conocida: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    sustancia_nombre: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    cantidad_ingerida: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    unidad_medida: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    via_exposicion: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    tiempo_exposicion: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    habitual_nombre: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    habitual_tipo: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    fecha_registro: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    usuario = relationship("Usuario")

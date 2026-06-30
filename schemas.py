@@ -305,3 +305,30 @@ class HospitalResponse(HospitalCreate):
     fecha_registro: datetime
 
     model_config = {"from_attributes": True}
+
+
+# ── Historial Clínico Schemas ─────────────────────────────────────
+
+class HistorialClinicoCreate(BaseModel):
+    edad: Optional[str] = None
+    genero: Optional[str] = None
+    ocupacion: Optional[str] = None
+    enfermedades: Optional[str] = None
+    alergias: Optional[str] = None
+    toxico_nombre: Optional[str] = None
+    toxico_tipo: Optional[str] = None
+    sustancia_conocida: Optional[str] = None
+    sustancia_nombre: Optional[str] = None
+    cantidad_ingerida: Optional[str] = None
+    unidad_medida: Optional[str] = None
+    via_exposicion: Optional[str] = None
+    tiempo_exposicion: Optional[str] = None
+    habitual_nombre: Optional[str] = None
+    habitual_tipo: Optional[str] = None
+
+class HistorialClinicoResponse(HistorialClinicoCreate):
+    id_historial: int
+    id_usuario: Optional[int] = None
+    fecha_registro: datetime
+
+    model_config = {"from_attributes": True}

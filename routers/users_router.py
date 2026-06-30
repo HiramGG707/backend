@@ -5,8 +5,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from database import get_db
-from models import Usuario
-from schemas import UserResponse, UserUpdateRequest, PasswordChangeRequest, EmailChangeRequest
+from models import Usuario, HistorialClinico
+from schemas import UserResponse, UserUpdateRequest, PasswordChangeRequest, EmailChangeRequest, HistorialClinicoCreate, HistorialClinicoResponse
 from auth import hash_password, verify_password
 from dependencies import get_current_user
 
@@ -172,5 +172,52 @@ async def delete_me(
     await db.delete(usuario)
     await db.commit()
     return {"detail": "Cuenta eliminada correctamente"}
+
+
+# ── POST /users/historial ─────────────────────────────────────────────────────
+
+@router.post("/historial", response_model=HistorialClinicoResponse, status_code=status.HTTP_201_CREATED)
+async def create_historial(
+    datos: HistorialClinicoCreate,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    nuevo_historial = HistorialClinico(
+        id_usuario=current_user["id_usuario"],
+        edad=datos.edad,
+        genero=datos.genero,
+        ocupacion=datos.ocupacion,
+        enfermedades=datos.enfermedades,
+        alergias=datos.alergias,
+        toxico_nombre=datos.toxico_nombre,
+        toxico_tipo=datos.toxico_tipo,
+        sustancia_conocida=datos.sustancia_conocida,
+        sustancia_nombre=datos.sustancia_nombre,
+        cantidad_ingerida=datos.cantidad_ingerida,
+        unidad_medida=datos.unidad_medida,
+        via_exposicion=datos.via_exposicion,
+        tiempo_exposicion=datos.tiempo_exposicion,
+        habitual_nombre=datos.habitual_nombre,
+        habitual_tipo=datos.habitual_tipo,
+    )
+    db.add(nuevo_historial)
+    await db.commit()
+    await db.refresh(nuevo_historial)
+    return nuevo_historial
+
+
+# ── GET /users/historial ──────────────────────────────────────────────────────
+
+@router.get("/historial", response_model=list[HistorialClinicoResponse])
+async def get_historial(
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(HistorialClinico)
+        .where(HistorialClinico.id_usuario == current_user["id_usuario"])
+        .order_by(HistorialClinico.fecha_registro.desc())
+    )
+    return result.scalars().all()
 
 
