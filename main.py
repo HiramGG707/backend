@@ -10,6 +10,18 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
+@app.on_event("startup")
+async def startup_event():
+    from database import engine, Base
+    import models
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+            print("Tablas sincronizadas/creadas en la base de datos.")
+    except Exception as e:
+        print(f"Error al sincronizar tablas al iniciar: {e}")
+
 # ── CORS ───────────────────────────────────────────────────────────────────────
 # Permite peticiones desde el simulador iOS (localhost) y el emulador Android (10.0.2.2)
 app.add_middleware(
